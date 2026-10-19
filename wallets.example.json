@@ -1,0 +1,13 @@
+{
+  "settings": {
+    "timezone": "Pacific/Honolulu",
+    "min_liquidity_usd": 10000,
+    "top_holdings": 3,
+    "min_holding_usd": 1
+  },
+  "wallets": [
+    { "label": "Main SOL", "chain": "solana", "address": "YOUR_SOLANA_ADDRESS" },
+    { "label": "Trading SOL", "chain": "solana", "address": "ANOTHER_SOLANA_ADDRESS" },
+    { "label": "NEAR", "chain": "near", "address": "yourname.near" }
+  ]
+}

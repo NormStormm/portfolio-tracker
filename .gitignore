@@ -1,0 +1,5 @@
+state.json
+wallets.json
+.env
+__pycache__/
+watch_state.json

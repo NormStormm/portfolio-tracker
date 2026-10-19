@@ -1,0 +1,44 @@
+name: Portfolio report
+
+on:
+  schedule:
+    # 9:00 AM and 9:00 PM Hawaii time (HST = UTC-10, no DST). GitHub may start runs a few minutes late.
+    - cron: "0 7,19 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: portfolio-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Last run's valuations, used for the "change since last update" column.
+      - name: Restore previous state
+        uses: actions/cache/restore@v4
+        with:
+          path: state.json
+          key: wallet-state-${{ github.run_id }}
+          restore-keys: wallet-state-
+
+      - name: Build and send report
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WALLETS_JSON: ${{ secrets.WALLETS_JSON }}
+          SOLANA_RPC_URL: ${{ secrets.SOLANA_RPC_URL }}
+        run: python notifier.py
+
+      - name: Save state
+        uses: actions/cache/save@v4
+        with:
+          path: state.json
+          key: wallet-state-${{ github.run_id }}

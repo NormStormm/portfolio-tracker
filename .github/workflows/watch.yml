@@ -1,0 +1,41 @@
+name: Spike watch
+
+on:
+  schedule:
+    # Every 30 min (at :15 and :45 to dodge GitHub's busy top-of-hour). Silent unless a token spikes.
+    - cron: "15,45 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: spike-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      # Recent prices, used to measure the move over the last hour.
+      - name: Restore price history
+        uses: actions/cache/restore@v4
+        with:
+          path: watch_state.json
+          key: watch-state-${{ github.run_id }}
+          restore-keys: watch-state-
+
+      # ubuntu-latest ships Python 3.12; skipping setup-python keeps each run under a minute.
+      - name: Check for spikes
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WALLETS_JSON: ${{ secrets.WALLETS_JSON }}
+          SOLANA_RPC_URL: ${{ secrets.SOLANA_RPC_URL }}
+        run: python3 notifier.py --watch
+
+      - name: Save price history
+        uses: actions/cache/save@v4
+        with:
+          path: watch_state.json
+          key: watch-state-${{ github.run_id }}

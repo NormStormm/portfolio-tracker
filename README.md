@@ -68,7 +68,8 @@ Needs a Telegram account and a GitHub account. About 10 minutes.
    | `WALLETS_JSON` | the contents of your `wallets.json` |
    | `SOLANA_RPC_URL` | optional: a free Helius RPC URL, which is more reliable than the public one |
 
-4. **Test it:** **Actions → Portfolio report → Run workflow**. The first message says "(first report)"; changes appear from the second run.
+4. **Turn on the schedules:** in both files in `.github/workflows/`, remove the `#` marks in front of the `schedule:` lines (they're off in this public copy so it doesn't run without secrets).
+5. **Test it:** **Actions → Portfolio report → Run workflow**. The first message says "(first report)"; changes appear from the second run.
 
 Settings (in the `settings` block of the wallet list): `timezone`, `min_liquidity_usd`, `top_holdings`, `min_holding_usd`, and the spike settings `spike_pct`, `spike_min_usd`, `spike_window_min`.
 
